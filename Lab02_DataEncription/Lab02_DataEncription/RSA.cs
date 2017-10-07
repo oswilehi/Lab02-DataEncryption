@@ -14,74 +14,124 @@ namespace Lab02_DataEncription
         1. Generar las llaves privadas y públicas son dos números primos
         2.  Cifrar el mensaje P^e = E ( mod n ) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado*/
 
-        //Numero primo 'p'
+
         private int p;
         //Numero primo 'q'
         private int q;
-
         private int n;  //llave pública y privada
         /// <summary>
         /// Public key
         /// </summary>
-        public int publicKey { get; set; }//llave pública
+
+        public int publicKey { get; set; }// Lave pública
+
         /// <summary>
         /// Private key
         /// </summary>
         public int privateKey { get; set; } //llave privada
-        private string filePath;
+
+        private string filePaht;
 
         public RSA()
         {
 
         }
+        /// <summary>
+        /// Method to generate a pirme number using a function
+        /// </summary>
         private void GeneratePrimeNumber()
         {
             Random r = new Random();
-            var n = r.Next(0, 59);
+
+            var n = r.Next(1, 59);
+           
 
             p = PolinomialToGeneratePrimeNumber(n);
             do
             {
-                n = r.Next(0, 59);
+                n = r.Next(1, 59);
                 q = PolinomialToGeneratePrimeNumber(n);
             } while (q.CompareTo(p) == 0);
 
         }
+        /// <summary>
+        /// Function polinomial to generate a prime number. The min value is 4567 and the max value is 5611
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
         private int PolinomialToGeneratePrimeNumber(int n)
         {
             //Polinomio de J. Brox que generan un número primo. El valor de n va entre cero y cincuenta nueve.
-            return 6 * (n ^ 2) - 342 * n + 4903;
+            int a = (int)Math.Pow(n, 2);
+            return (6 * a) - (342 * n) + 4903;
         }
+        /// <summary>
+        /// This method multiply both p and q
+        /// </summary>
+        /// <returns>p*q</returns>
         private int GenerateValueN()
         {
             return p * q;
+
         }
+
+
+        /// <summary>
+        /// This method find the value phi eulier of the numbers p and q
+        /// </summary>
+        /// <returns>Phi eulier value</returns>
         private int PhiEulier()
         {
             return (p - 1) * (q - 1);
         }
+        /// <summary>
+        /// This method find a number called e that is co-prime number with another number called n
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns>co-prime number of the parameter n</returns>
         private int CoprimeNumber(int n)
         {
             int e = 1;
             do
                 e++;
-            while ((e.CompareTo(n) != -1) || ModBetweenTwoNumbers(e, n) != 0);
+            while (ModBetweenTwoNumbers(e, n) == 0 || e <= 3 || NoIsPrime(e));
 
             return e;
         }
+        /// <summary>
+        /// Method to apply the operation mod between two numbers
+        /// </summary>
+        /// <param name="e">number 1</param>
+        /// <param name="n">number 2</param>
+        /// <returns>mod between e and n</returns>
         private int ModBetweenTwoNumbers(int e, int n)
         {
             return n % e;
         }
-
-        private int GenerateValueJ(int n, int j)
+        /// <summary>
+        /// Method to validate if the parameter number is a prime number.
+        /// </summary>
+        /// <param name="number">A number</param>
+        /// <returns>True: no is a prime number, False: is a prime number</returns>
+        private bool NoIsPrime(int number)
         {
-            j = n;
+            return number % 2 == 0 ? true : false;
+        }
+        /// <summary>
+        /// This method create the private key
+        /// </summary>
+        /// <param name="z"></param>
+        /// <param name="e"></param>
+        /// <returns>private key</returns>
+        private int GenerateValueJ(int z, int e)
+        {
+            var aux = z;
             do
             {
-                j++;
-            } while (j % n == 1);
-            return j;
+                aux++;
+            } while (aux % z != 1);
+            aux = aux / e;
+            return aux;
         }
         /// <summary>
         /// Method to generate private and public key
@@ -90,17 +140,18 @@ namespace Lab02_DataEncription
         {
             GeneratePrimeNumber();
             n = GenerateValueN();
-            var z = PhiEulier();
-            publicKey = CoprimeNumber(n);
-            privateKey = GenerateValueJ(n, privateKey);
-
+            var  z = PhiEulier();
+            publicKey = CoprimeNumber(z);
+            privateKey = GenerateValueJ(z,publicKey);
+              
         }
 
-        public byte[] Encryption(byte[] plainText)
+      public int Encryption(int key)
         {
 
             // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
             //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
+
 
             byte[] encryptedData = new byte[plainText.Length];
 
@@ -120,6 +171,5 @@ namespace Lab02_DataEncription
 
             return deencrypted;
         }
-
     }
 }
