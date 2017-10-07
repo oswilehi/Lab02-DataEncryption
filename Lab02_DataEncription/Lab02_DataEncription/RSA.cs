@@ -36,34 +36,35 @@ namespace Lab02_DataEncription
         {
 
         }
+        
         /// <summary>
-        /// Method to generate a pirme number using a function
+        /// Method to generate a prime number using a function
         /// </summary>
         private void GeneratePrimeNumber()
         {
             Random r = new Random();
 
-            var n = r.Next(1, 59);
-           
+            var n = r.Next(0, 14); //de cero a 14 para que la función PolinomialToGeneratePrimeNumber devuelva un valor entre 0 y 251
+
+        
 
             p = PolinomialToGeneratePrimeNumber(n);
             do
             {
-                n = r.Next(1, 59);
+                n = r.Next(0, 14);
                 q = PolinomialToGeneratePrimeNumber(n);
             } while (q.CompareTo(p) == 0);
 
         }
         /// <summary>
-        /// Function polinomial to generate a prime number. The min value is 4567 and the max value is 5611
+        /// Function polinomial to generate a prime number. The min value is 41 and the max value is 1601
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
         private int PolinomialToGeneratePrimeNumber(int n)
         {
-            //Polinomio de J. Brox que generan un número primo. El valor de n va entre cero y cincuenta nueve.
-            int a = (int)Math.Pow(n, 2);
-            return (6 * a) - (342 * n) + 4903;
+            //Polinomio de Euler que generan un número primo. El valor de n va entre cero y treinta nueve.
+            return (int)Math.Pow(n, 2) + n + 41;
         }
         /// <summary>
         /// This method multiply both p and q
@@ -94,7 +95,7 @@ namespace Lab02_DataEncription
             int e = 1;
             do
                 e++;
-            while (ModBetweenTwoNumbers(e, n) == 0 || e <= 3 || NoIsPrime(e));
+            while (ModBetweenTwoNumbers(e, n) == 0 || NoIsPrime(e));
 
             return e;
         }
@@ -115,7 +116,15 @@ namespace Lab02_DataEncription
         /// <returns>True: no is a prime number, False: is a prime number</returns>
         private bool NoIsPrime(int number)
         {
-            return number % 2 == 0 ? true : false;
+            int count = 0;
+            for (int i = 1; i < number; i++)
+            {
+                if (number % i == 0)
+                {
+                    count++;
+                }
+            }
+            return count > 2 ? true : false;
         }
         /// <summary>
         /// This method create the private key
@@ -146,6 +155,7 @@ namespace Lab02_DataEncription
               
         }
 
+
       public int Encryption(int key)
         {
 
@@ -170,6 +180,6 @@ namespace Lab02_DataEncription
                 deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
 
             return deencrypted;
-        }
+        }     
     }
 }
