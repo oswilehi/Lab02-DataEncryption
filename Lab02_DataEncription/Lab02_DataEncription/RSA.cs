@@ -14,38 +14,38 @@ namespace Lab02_DataEncription
         1. Generar las llaves privadas y públicas son dos números primos
         2.  Cifrar el mensaje P^e = E ( mod n ) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado*/
 
-        // private BigInteger p { get; set; }
-        //public BigInteger q { get; set; }
+        //Numero primo 'p'
         private int p;
+        //Numero primo 'q'
         private int q;
 
         private int n;  //llave pública y privada
         /// <summary>
         /// Public key
         /// </summary>
-        public int e { get; set; }// Lave pública
+        public int publicKey { get; set; }//llave pública
         /// <summary>
         /// Private key
         /// </summary>
-        public int j { get; set; } //llave privada
-        private string filePaht;
-       
+        public int privateKey { get; set; } //llave privada
+        private string filePath;
+
         public RSA()
         {
-           
+
         }
         private void GeneratePrimeNumber()
         {
             Random r = new Random();
             var n = r.Next(0, 59);
-           
+
             p = PolinomialToGeneratePrimeNumber(n);
             do
             {
                 n = r.Next(0, 59);
                 q = PolinomialToGeneratePrimeNumber(n);
-            } while (q.CompareTo(p) ==0);
-            
+            } while (q.CompareTo(p) == 0);
+
         }
         private int PolinomialToGeneratePrimeNumber(int n)
         {
@@ -55,7 +55,7 @@ namespace Lab02_DataEncription
         private int GenerateValueN()
         {
             return p * q;
-        } 
+        }
         private int PhiEulier()
         {
             return (p - 1) * (q - 1);
@@ -90,25 +90,36 @@ namespace Lab02_DataEncription
         {
             GeneratePrimeNumber();
             n = GenerateValueN();
-            var  z = PhiEulier();
-            e = CoprimeNumber(n);
-            j = GenerateValueJ(n,j);
-               
+            var z = PhiEulier();
+            publicKey = CoprimeNumber(n);
+            privateKey = GenerateValueJ(n, privateKey);
+
         }
 
         public byte[] Encryption(byte[] plainText)
         {
+
             // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
             //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
-            
-            for (int i = 0; i < plainText.Length; i++)
-            {
-                var a = (plainText[i] ^ e)% n;
-                
 
-            }
+            byte[] encryptedData = new byte[plainText.Length];
+
+            for (int i = 0; i < plainText.Length; i++)
+               encryptedData[i] = Convert.ToByte((plainText[i] ^ publicKey) % n);
+
+            return encryptedData;
         }
 
-    
+
+        public byte[] Deencryption(byte[] encryptedData, int key)
+        {          
+            byte[] deencrypted = new byte[encryptedData.Length];
+
+            for (int i = 0; i < deencrypted.Length; i++)
+                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
+
+            return deencrypted;
+        }
+
     }
 }
