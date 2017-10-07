@@ -45,35 +45,7 @@ namespace Lab02_DataEncription
                 
             }
             Console.ReadLine();
-           /* byte[] bytes;
-            using (var file = new FileStream("C:\\Users\\jsala\\Pictures\\emilyo.jpeg", FileMode.Open))
-            {
-                using (var binaryFile = new BinaryReader(file, Encoding.ASCII))
-                {
-                    var mensaje = binaryFile.ReadBytes((int)file.Length);
-                    // Instanciamos el algorimo asimétrico RSA
-
-                    bytes = mensaje;
-                }
-            }
-            using (var file = new FileStream("C:\\Users\\jsala\\Pictures\\emilyo.txt", FileMode.Append))
-            {
-                using (var binaryFile = new BinaryWriter(file, Encoding.ASCII))
-                {
-                   
-                    RSACryptoServiceProvider primerRSA = new RSACryptoServiceProvider();
-                    // Establecemos la longitud de la clave que queremos usar
-                    primerRSA.KeySize = 2048;
-                   
-                    bytes = primerRSA.Encrypt(bytes, true);
-                    for (int i = 0; i < bytes.Length; i++)
-                    {
-                        binaryFile.Write(bytes[i]);
-                    }
-
-                }
-            }*/
-            
+                     
            
           
         }
