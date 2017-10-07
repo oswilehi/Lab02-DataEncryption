@@ -23,7 +23,8 @@ namespace Lab02_DataEncription
                 Console.SetCursorPosition(32, Console.CursorTop - 1);
                 var user =  Console.ReadLine();
                 rsa.GenerateKeys();
-                Console.WriteLine("your private key is:" + rsa.j.ToString());
+                Console.WriteLine("your private key is:" + rsa.privateKey.ToString());
+                Console.WriteLine("Llave cifrada: " + rsa.Encryption(rsa.privateKey).ToString() );
                // rsa.Encryption();
                 Console.WriteLine("c:/encryption/:");
                 Console.SetCursorPosition(15, Console.CursorTop - 1);
