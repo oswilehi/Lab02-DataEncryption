@@ -24,7 +24,10 @@ namespace Lab02_DataEncription
                 var user =  Console.ReadLine();
                 rsa.GenerateKeys();
                 Console.WriteLine("your private key is:" + rsa.privateKey.ToString());
-               // Console.WriteLine("Llave cifrada: " + rsa.Encryption(rsa.privateKey).ToString() );
+
+                Console.WriteLine("Llave cifrada: " + rsa.Encryption(rsa.privateKey).ToString() );
+
+
                // rsa.Encryption();
                 Console.WriteLine("c:/encryption/:");
                 Console.SetCursorPosition(15, Console.CursorTop - 1);
@@ -33,7 +36,7 @@ namespace Lab02_DataEncription
                 if (!Validation(entry, ref filePath, ref type))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("¡Error! Asegúrese de haber escrito correctamente los comandos del progama. Verifique que exista el archivo.");
+                    Console.WriteLine("¡Error! Asegúrese de haber escrito correctamente los comandos del programa. Verifique que exista el archivo.");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 else

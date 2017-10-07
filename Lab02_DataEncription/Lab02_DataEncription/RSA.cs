@@ -14,22 +14,27 @@ namespace Lab02_DataEncription
         1. Generar las llaves privadas y públicas son dos números primos
         2.  Cifrar el mensaje P^e = E ( mod n ) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado*/
 
+
         private int p;
+        //Numero primo 'q'
         private int q;
         private int n;  //llave pública y privada
         /// <summary>
         /// Public key
         /// </summary>
+
         public int publicKey { get; set; }// Lave pública
+
         /// <summary>
         /// Private key
         /// </summary>
         public int privateKey { get; set; } //llave privada
+
         private string filePaht;
-       
+
         public RSA()
         {
-           
+
         }
         
         /// <summary>
@@ -38,15 +43,18 @@ namespace Lab02_DataEncription
         private void GeneratePrimeNumber()
         {
             Random r = new Random();
+
             var n = r.Next(0, 14); //de cero a 14 para que la función PolinomialToGeneratePrimeNumber devuelva un valor entre 0 y 251
-           
+
+        
+
             p = PolinomialToGeneratePrimeNumber(n);
             do
             {
                 n = r.Next(0, 14);
                 q = PolinomialToGeneratePrimeNumber(n);
-            } while (q.CompareTo(p) ==0);
-            
+            } while (q.CompareTo(p) == 0);
+
         }
         /// <summary>
         /// Function polinomial to generate a prime number. The min value is 41 and the max value is 1601
@@ -65,7 +73,10 @@ namespace Lab02_DataEncription
         private int GenerateValueN()
         {
             return p * q;
-        } 
+
+        }
+
+
         /// <summary>
         /// This method find the value phi eulier of the numbers p and q
         /// </summary>
@@ -141,28 +152,34 @@ namespace Lab02_DataEncription
             var  z = PhiEulier();
             publicKey = CoprimeNumber(z);
             privateKey = GenerateValueJ(z,publicKey);
-               
+              
         }
 
-        /*  public int Encryption(int key)
-          {
-              // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
-              //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
-              Console.WriteLine(publicKey.ToString() + " " + n.ToString());
-              int a = (int)Math.Pow(key, publicKey);
 
-              return a % n;
+      public int Encryption(int key)
+        {
 
-            }
-            private int ModularPow(int number, int exponent, int mod)
-          {
-              var value = 1;
-              for (int i = 0; i < exponent; i++)
-              {
-                  value = (exponent * number) % mod;
-              }
-              return value;
-          }*/
+            // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
+            //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
 
+
+            byte[] encryptedData = new byte[plainText.Length];
+
+            for (int i = 0; i < plainText.Length; i++)
+               encryptedData[i] = Convert.ToByte((plainText[i] ^ publicKey) % n);
+
+            return encryptedData;
+        }
+
+
+        public byte[] Deencryption(byte[] encryptedData, int key)
+        {          
+            byte[] deencrypted = new byte[encryptedData.Length];
+
+            for (int i = 0; i < deencrypted.Length; i++)
+                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
+
+            return deencrypted;
+        }     
     }
 }
