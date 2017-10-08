@@ -131,14 +131,16 @@ namespace Lab02_DataEncription
         /// <param name="z"></param>
         /// <param name="e"></param>
         /// <returns>private key</returns>
-        private int GenerateValueJ(int z, int e)
+        private int GeneratePrivateKey(int z, int e)
         {
             var aux = z;
+           
             do
             {
                 aux++;
             } while (aux % z != 1);
             aux = aux / e;
+            
             return aux;
         }
         /// <summary>
@@ -147,16 +149,33 @@ namespace Lab02_DataEncription
         public void GenerateKeys()
         {
             GeneratePrimeNumber();
-            var ja = Convert.ToByte(p);
             n = GenerateValueN();
             var  z = PhiEulier();
             publicKey = CoprimeNumber(z);
-            privateKey = GenerateValueJ(z,publicKey);
+            privateKey = GeneratePrivateKeyWithModInverse(publicKey,z);
+           
               
+        }
+        
+        private int GeneratePrivateKeyWithModInverse(int a, int n)
+        {
+            int i = n, v = 0, d = 1;
+            while (a > 0)
+            {
+                int t = i / a, x = a;
+                a = i % x;
+                i = x;
+                x = d;
+                d = v - t * x;
+                v = x;
+            }
+            v %= n;
+            if (v < 0) v = (v + n) % n;
+            return v;
         }
 
 
-         public byte[] Encryption(byte[] plainText)
+        public byte[] Encryption(byte[] plainText)
         {
 
             // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
@@ -186,7 +205,12 @@ namespace Lab02_DataEncription
                         using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
                         {
                             for (int i = 0; i < bytes.Length; i++)
-                                writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
+                            {
+                                var c = (char)((bytes[i] ^ publicKey) % n);
+                                writer.Write(c);
+                                //writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
+                            }
+                               // writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
                             
                         }
                     }
@@ -209,8 +233,13 @@ namespace Lab02_DataEncription
                         using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
                         {
                             for (int i = 0; i < bytes.Length; i++)
+                            {
+                                var c = (char)ModularPow(bytes[i], key, mod);
+                              //  var v = Convert.ToByte(c);
+                                writer.Write(c);
+                            }
                                // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
-                                writer.Write(Convert.ToByte(ModularPow(bytes[i], key, mod)));
+                               
 
                         }
                     }
@@ -228,7 +257,7 @@ namespace Lab02_DataEncription
         private int ModularPow(int number, int exponent, int mod)
         {
             var result = 1;
-            var ejemplo = Convert.ToByte(exponent);
+      //      var ejemplo = Convert.ToByte(exponent);
             for (int i = 1; i < exponent; i++)
                 result = (result * Convert.ToInt32(number)) % mod;
 
