@@ -149,11 +149,12 @@ namespace Lab02_DataEncription
         public void GenerateKeys()
         {
             GeneratePrimeNumber();
+           
             n = GenerateValueN();
             var  z = PhiEulier();
             publicKey = CoprimeNumber(z);
             privateKey = GeneratePrivateKeyWithModInverse(publicKey,z);
-           
+                      
               
         }
         
@@ -173,8 +174,14 @@ namespace Lab02_DataEncription
             if (v < 0) v = (v + n) % n;
             return v;
         }
-
-
+        private int encry(int value)
+        {
+            return ModularPow(value, publicKey, n);
+        }
+        private int decryp(int value)
+        {
+            return ModularPow(value, privateKey, n);
+        }
         public byte[] Encryption(byte[] plainText)
         {
 
@@ -206,11 +213,12 @@ namespace Lab02_DataEncription
                         {
                             for (int i = 0; i < bytes.Length; i++)
                             {
-                                var c = (char)((bytes[i] ^ publicKey) % n);
+                                //var c = (char)((bytes[i] ^ publicKey) % n);
+                                var c = (char)ModularPow(bytes[i], publicKey, n);
                                 writer.Write(c);
                                 //writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
                             }
-                               // writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
+                               
                             
                         }
                     }
@@ -257,9 +265,9 @@ namespace Lab02_DataEncription
         private int ModularPow(int number, int exponent, int mod)
         {
             var result = 1;
-      //      var ejemplo = Convert.ToByte(exponent);
-            for (int i = 1; i < exponent; i++)
-                result = (result * Convert.ToInt32(number)) % mod;
+     
+            for (int i = 0; i < exponent; i++)
+                result = (result * number) % mod;
 
             return result;
         }
