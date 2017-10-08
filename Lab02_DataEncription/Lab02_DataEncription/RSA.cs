@@ -39,17 +39,20 @@ namespace Lab02_DataEncription
         private void GeneratePrimeNumber()
         {
             Random r = new Random();
+            int[] array = new int[] { 2, 3, 5, 7, 11, 13, 17, 19 };
+            //var n = r.Next(0, 14); //de cero a 14 para que la función PolinomialToGeneratePrimeNumber devuelva un valor entre 0 y 251
+            var n = r.Next(0, 7);
 
-            var n = r.Next(0, 14); //de cero a 14 para que la función PolinomialToGeneratePrimeNumber devuelva un valor entre 0 y 251
 
-        
-
-            p = PolinomialToGeneratePrimeNumber(n);
+            //p = PolinomialToGeneratePrimeNumber(n);
+            p = array[n];
             do
             {
-                n = r.Next(0, 14);
-                q = PolinomialToGeneratePrimeNumber(n);
-            } while (q.CompareTo(p) == 0);
+                //n = r.Next(0, 14);
+                //q = PolinomialToGeneratePrimeNumber(n);
+                n = r.Next(0,7);
+                q = array[n];
+            } while (q.CompareTo(p) == 0 || GenerateValueN() > 255);
 
         }
         /// <summary>
@@ -212,8 +215,6 @@ namespace Lab02_DataEncription
         //Método de prueba con RSA
         public void EncryptionRSA(string path)
         {
-            Console.WriteLine(p.ToString() + " q:" + q.ToString());
-
             using (var file = new FileStream(path, FileMode.Open))
             {
                 using (var reader = new BinaryReader(file))
