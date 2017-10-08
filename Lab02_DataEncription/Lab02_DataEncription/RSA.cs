@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.IO;
 
 
 namespace Lab02_DataEncription
@@ -16,9 +17,9 @@ namespace Lab02_DataEncription
 
 
         private int p;
-        //Numero primo 'q'
+        
         private int q;
-        private int n;  //llave pública y privada
+        public int n { get; set; }  //llave pública y privada
         /// <summary>
         /// Public key
         /// </summary>
@@ -29,8 +30,6 @@ namespace Lab02_DataEncription
         /// Private key
         /// </summary>
         public int privateKey { get; set; } //llave privada
-
-        private string filePaht;
 
         public RSA()
         {
@@ -148,6 +147,7 @@ namespace Lab02_DataEncription
         public void GenerateKeys()
         {
             GeneratePrimeNumber();
+            var ja = Convert.ToByte(p);
             n = GenerateValueN();
             var  z = PhiEulier();
             publicKey = CoprimeNumber(z);
@@ -156,22 +156,84 @@ namespace Lab02_DataEncription
         }
 
 
-      public int Encryption(int key)
+         public byte[] Encryption(byte[] plainText)
         {
 
             // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
             //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
-
-
             byte[] encryptedData = new byte[plainText.Length];
 
             for (int i = 0; i < plainText.Length; i++)
-               encryptedData[i] = Convert.ToByte((plainText[i] ^ publicKey) % n);
+                encryptedData[i] = Convert.ToByte((plainText[i] ^ publicKey) % n);
 
             return encryptedData;
+
         }
+        //Método de prueba con RSA
+        public void EncryptionRSA(string path)
+        {
+            Console.WriteLine(p.ToString() +" q:" +  q.ToString());
 
+            using (var file = new FileStream(path, FileMode.Open))
+            {
+                using (var reader = new BinaryReader(file))
+                {
+                    var bytes = reader.ReadBytes((int)file.Length);
+                    
+                    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileNameWithoutExtension(path));
+                    using (var outputFile = new FileStream(outputPath + ".cif", FileMode.Append))
+                    {
+                        using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
+                        {
+                            for (int i = 0; i < bytes.Length; i++)
+                                writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
+                            
+                        }
+                    }
 
+                }
+            }
+        }
+        //Método de prueba con RSA
+        public void DecryptionRSA(string path, int mod,int key)
+        {
+            using (var file = new FileStream(path, FileMode.Open))
+            {
+                using (var reader = new BinaryReader(file))
+                {
+                    var bytes = reader.ReadBytes((int)file.Length);
+
+                    string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileNameWithoutExtension(path));
+                    using (var outputFile = new FileStream(outputPath + "(1).txt", FileMode.Append))
+                    {
+                        using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
+                        {
+                            for (int i = 0; i < bytes.Length; i++)
+                               // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
+                                writer.Write(Convert.ToByte(ModularPow(bytes[i], key, mod)));
+
+                        }
+                    }
+
+                }
+            }
+        }
+        /// <summary>
+        /// Method to calculate modular exponentiation when the base and the exponent are too big
+        /// </summary>
+        /// <param name="number">Base</param>
+        /// <param name="exponent">exponente</param>
+        /// <param name="mod">modulo</param>
+        /// <returns>modular exponentiation</returns>
+        private int ModularPow(int number, int exponent, int mod)
+        {
+            var result = 1;
+            var ejemplo = Convert.ToByte(exponent);
+            for (int i = 1; i < exponent; i++)
+                result = (result * Convert.ToInt32(number)) % mod;
+
+            return result;
+        }
         public byte[] Deencryption(byte[] encryptedData, int key)
         {          
             byte[] deencrypted = new byte[encryptedData.Length];
@@ -180,6 +242,6 @@ namespace Lab02_DataEncription
                 deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
 
             return deencrypted;
-        }     
+        }      
     }
 }
