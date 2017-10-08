@@ -15,17 +15,14 @@ namespace Lab02_DataEncription
         1. Generar las llaves privadas y públicas son dos números primos
         2.  Cifrar el mensaje P^e = E ( mod n ) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado*/
 
-
+        //atributes
         private int p;
-        
         private int q;
         public int n { get; set; }  //llave pública y privada
         /// <summary>
         /// Public key
         /// </summary>
-
         public int publicKey { get; set; }// Lave pública
-
         /// <summary>
         /// Private key
         /// </summary>
@@ -74,8 +71,6 @@ namespace Lab02_DataEncription
             return p * q;
 
         }
-
-
         /// <summary>
         /// This method find the value phi eulier of the numbers p and q
         /// </summary>
@@ -126,24 +121,6 @@ namespace Lab02_DataEncription
             return count > 2 ? true : false;
         }
         /// <summary>
-        /// This method create the private key
-        /// </summary>
-        /// <param name="z"></param>
-        /// <param name="e"></param>
-        /// <returns>private key</returns>
-        private int GeneratePrivateKey(int z, int e)
-        {
-            var aux = z;
-           
-            do
-            {
-                aux++;
-            } while (aux % z != 1);
-            aux = aux / e;
-            
-            return aux;
-        }
-        /// <summary>
         /// Method to generate private and public key
         /// </summary>
         public void GenerateKeys()
@@ -157,7 +134,12 @@ namespace Lab02_DataEncription
                       
               
         }
-        
+        /// <summary>
+        /// This method create the private key
+        /// </summary>
+        /// <param name="z"></param>
+        /// <param name="e"></param>
+        /// <returns>private key</returns>
         private int GeneratePrivateKeyWithModInverse(int a, int n)
         {
             int i = n, v = 0, d = 1;
@@ -174,13 +156,21 @@ namespace Lab02_DataEncription
             if (v < 0) v = (v + n) % n;
             return v;
         }
-        private int encry(int value)
+        /// <summary>
+        /// Method to calculate modular exponentiation when the base and the exponent are too big
+        /// </summary>
+        /// <param name="number">Base</param>
+        /// <param name="exponent">exponente</param>
+        /// <param name="mod">modulo</param>
+        /// <returns>modular exponentiation</returns>
+        private int ModularPow(int number, int exponent, int mod)
         {
-            return ModularPow(value, publicKey, n);
-        }
-        private int decryp(int value)
-        {
-            return ModularPow(value, privateKey, n);
+            var result = 1;
+
+            for (int i = 0; i < exponent; i++)
+                result = (result * number) % mod;
+
+            return result;
         }
         public byte[] Encryption(byte[] plainText)
         {
@@ -195,17 +185,41 @@ namespace Lab02_DataEncription
             return encryptedData;
 
         }
+
+
+        public byte[] Decryption(byte[] encryptedData, int key)
+        {
+            byte[] deencrypted = new byte[encryptedData.Length];
+
+            for (int i = 0; i < deencrypted.Length; i++)
+                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
+
+            return deencrypted;
+        }
+
+
+
+        //METODOS DE PRUEBA
+        /*
+        private int encry(int value)
+        {
+            return ModularPow(value, publicKey, n);
+        }
+        private int decryp(int value)
+        {
+            return ModularPow(value, privateKey, n);
+        }*/
         //Método de prueba con RSA
         public void EncryptionRSA(string path)
         {
-            Console.WriteLine(p.ToString() +" q:" +  q.ToString());
+            Console.WriteLine(p.ToString() + " q:" + q.ToString());
 
             using (var file = new FileStream(path, FileMode.Open))
             {
                 using (var reader = new BinaryReader(file))
                 {
                     var bytes = reader.ReadBytes((int)file.Length);
-                    
+
                     string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Path.GetFileNameWithoutExtension(path));
                     using (var outputFile = new FileStream(outputPath + ".cif", FileMode.Append))
                     {
@@ -218,8 +232,8 @@ namespace Lab02_DataEncription
                                 writer.Write(c);
                                 //writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
                             }
-                               
-                            
+
+
                         }
                     }
 
@@ -227,7 +241,7 @@ namespace Lab02_DataEncription
             }
         }
         //Método de prueba con RSA
-        public void DecryptionRSA(string path, int mod,int key)
+        public void DecryptionRSA(string path, int mod, int key)
         {
             using (var file = new FileStream(path, FileMode.Open))
             {
@@ -243,11 +257,11 @@ namespace Lab02_DataEncription
                             for (int i = 0; i < bytes.Length; i++)
                             {
                                 var c = (char)ModularPow(bytes[i], key, mod);
-                              //  var v = Convert.ToByte(c);
+                                //  var v = Convert.ToByte(c);
                                 writer.Write(c);
                             }
-                               // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
-                               
+                            // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
+
 
                         }
                     }
@@ -255,30 +269,6 @@ namespace Lab02_DataEncription
                 }
             }
         }
-        /// <summary>
-        /// Method to calculate modular exponentiation when the base and the exponent are too big
-        /// </summary>
-        /// <param name="number">Base</param>
-        /// <param name="exponent">exponente</param>
-        /// <param name="mod">modulo</param>
-        /// <returns>modular exponentiation</returns>
-        private int ModularPow(int number, int exponent, int mod)
-        {
-            var result = 1;
-     
-            for (int i = 0; i < exponent; i++)
-                result = (result * number) % mod;
-
-            return result;
-        }
-        public byte[] Deencryption(byte[] encryptedData, int key)
-        {          
-            byte[] deencrypted = new byte[encryptedData.Length];
-
-            for (int i = 0; i < deencrypted.Length; i++)
-                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
-
-            return deencrypted;
-        }      
+        
     }
 }
