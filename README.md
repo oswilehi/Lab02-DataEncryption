@@ -15,6 +15,6 @@ El laboratorio 2 consistió en la realización de un programa que cifrará y des
 -Archivo cifrado: <br />
 ![alt text](https://github.com/JackelinneSC/Lab02-DataEncryption/blob/master/Lab02_DataEncription/Images/archivoCifrado.PNG)
 
--Utilización de interfas: <br />
+-Utilización de interfaz: <br />
 ![alt text](https://github.com/JackelinneSC/Lab02-DataEncryption/blob/master/Lab02_DataEncription/Images/interfaz.PNG)
 
