@@ -10,49 +10,30 @@ using System.IO;
 namespace Lab02_DataEncription
 {
     class RSA
-    {
-        /*ALgoritmo:
-        1. Generar las llaves privadas y públicas son dos números primos
-        2.  Cifrar el mensaje P^e = E ( mod n ) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado*/
+    {      
+        //Prime numbers
+        private static int p;
+        private static int q;
+        //Multplication of p and q
+        public int n { get; set; }  
 
-        //atributes
-        private int p;
-        private int q;
-        public int n { get; set; }  //llave pública y privada
-        /// <summary>
-        /// Public key
-        /// </summary>
-        public int publicKey { get; set; }// Lave pública
-        /// <summary>
-        /// Private key
-        /// </summary>
-        public int privateKey { get; set; } //llave privada
+        public int publicKey { get; set; }
+        public int privateKey { get; set; } 
 
-        public RSA()
-        {
-
-        }
-        
         /// <summary>
         /// Method to generate a prime number using a function
         /// </summary>
-        private void GeneratePrimeNumber()
+        private void GeneratePrimeNumber(int maxValueOfPlainText)
         {
             Random r = new Random();
-            int[] array = new int[] { 2, 3, 5, 7, 11, 13, 17, 19 };
-            //var n = r.Next(0, 14); //de cero a 14 para que la función PolinomialToGeneratePrimeNumber devuelva un valor entre 0 y 251
-            var n = r.Next(0, 7);
-
-
-            //p = PolinomialToGeneratePrimeNumber(n);
+            int[] array = new int[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43 };
+            var n = r.Next(0, 13);
             p = array[n];
             do
             {
-                //n = r.Next(0, 14);
-                //q = PolinomialToGeneratePrimeNumber(n);
-                n = r.Next(0,7);
+                n = r.Next(0, 13);
                 q = array[n];
-            } while (q.CompareTo(p) == 0 || GenerateValueN() > 255);
+            } while (q.CompareTo(p) == 0 || GenerateValueN() > 255 || GenerateValueN() < maxValueOfPlainText);
 
         }
         /// <summary>
@@ -66,16 +47,16 @@ namespace Lab02_DataEncription
             return (int)Math.Pow(n, 2) + n + 41;
         }
         /// <summary>
-        /// This method multiply both p and q
+        /// This method multiply p and q
         /// </summary>
         /// <returns>p*q</returns>
         private int GenerateValueN()
         {
             return p * q;
-
         }
         /// <summary>
         /// This method find the value phi eulier of the numbers p and q
+        /// Phi Eulier represents the number of numbers that are coprime with n
         /// </summary>
         /// <returns>Phi eulier value</returns>
         private int PhiEulier()
@@ -92,7 +73,7 @@ namespace Lab02_DataEncription
             int e = 1;
             do
                 e++;
-            while (ModBetweenTwoNumbers(e, n) == 0 || NoIsPrime(e));
+            while (ModBetweenTwoNumbers(e, n) == 0 || IsNotPrime(e));
 
             return e;
         }
@@ -107,11 +88,11 @@ namespace Lab02_DataEncription
             return n % e;
         }
         /// <summary>
-        /// Method to validate if the parameter number is a prime number.
+        /// Method that validate if the parameter is a prime number.
         /// </summary>
         /// <param name="number">A number</param>
         /// <returns>True: no is a prime number, False: is a prime number</returns>
-        private bool NoIsPrime(int number)
+        private bool IsNotPrime(int number)
         {
             int count = 0;
             for (int i = 1; i < number; i++)
@@ -126,16 +107,15 @@ namespace Lab02_DataEncription
         /// <summary>
         /// Method to generate private and public key
         /// </summary>
-        public void GenerateKeys()
+        public void GenerateKeys(int maxValueOfText)
         {
-            GeneratePrimeNumber();
-           
+            GeneratePrimeNumber(maxValueOfText);
             n = GenerateValueN();
-            var  z = PhiEulier();
+            var z = PhiEulier();
             publicKey = CoprimeNumber(z);
-            privateKey = GeneratePrivateKeyWithModInverse(publicKey,z);
-                      
-              
+            privateKey = GeneratePrivateKeyWithModInverse(publicKey, z);
+
+
         }
         /// <summary>
         /// This method create the private key
@@ -169,50 +149,42 @@ namespace Lab02_DataEncription
         private int ModularPow(int number, int exponent, int mod)
         {
             var result = 1;
-
             for (int i = 0; i < exponent; i++)
                 result = (result * number) % mod;
-
             return result;
         }
+        /// <summary>
+        /// Method that encrypts using RSA method
+        /// </summary>
+        /// <param name="plainText"></param>
+        /// <returns>The method returns an array of bytes</returns>
         public byte[] Encryption(byte[] plainText)
         {
-
-            // 2.Cifrar el mensaje P ^ e = E(mod n) P es el mensaje en texto plano,n y e son la clave pública,E es el mensaje cifrado
-            //y = x^e mod n  y = E(x) be the encryption function where x is an integer and y is            the encrypted form of x
             byte[] encryptedData = new byte[plainText.Length];
 
             for (int i = 0; i < plainText.Length; i++)
-                encryptedData[i] = Convert.ToByte((plainText[i] ^ publicKey) % n);
-
+                encryptedData[i] = Convert.ToByte(Convert.ToInt64(Math.Pow(plainText[i], publicKey)) % n);
             return encryptedData;
-
         }
-
-
-        public byte[] Decryption(byte[] encryptedData, int key)
+        /// <summary>
+        /// Method that deencrypts using RSA method
+        /// </summary>
+        /// <param name="encryptedData"></param>
+        /// <param name="mod"></param>
+        /// <param name="key"></param>
+        /// <returns>Returns an array of bytes</returns>
+        public byte[] Deencryption(byte[] encryptedData, int mod, int key)
         {
             byte[] deencrypted = new byte[encryptedData.Length];
-
             for (int i = 0; i < deencrypted.Length; i++)
-                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt32(encryptedData[i]), key) % n);
-
+                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt64(encryptedData[i]), key) % mod);
             return deencrypted;
         }
-
-
-
-        //METODOS DE PRUEBA
-        /*
-        private int encry(int value)
-        {
-            return ModularPow(value, publicKey, n);
-        }
-        private int decryp(int value)
-        {
-            return ModularPow(value, privateKey, n);
-        }*/
-        //Método de prueba con RSA
+        /// <summary>
+        /// Method that encrypts using RSA method.
+        /// It writes the encrypted text into file.
+        /// </summary>
+        /// <param name="path"></param>
         public void EncryptionRSA(string path)
         {
             using (var file = new FileStream(path, FileMode.Open))
@@ -228,20 +200,21 @@ namespace Lab02_DataEncription
                         {
                             for (int i = 0; i < bytes.Length; i++)
                             {
-                                //var c = (char)((bytes[i] ^ publicKey) % n);
                                 var c = (char)ModularPow(bytes[i], publicKey, n);
                                 writer.Write(c);
-                                //writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
                             }
-
-
                         }
                     }
-
                 }
             }
         }
-        //Método de prueba con RSA
+        /// <summary>
+        /// Method that deencrypts using RSA method.
+        /// It writes the deencrypted text into a file.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="mod"></param>
+        /// <param name="key"></param>
         public void DecryptionRSA(string path, int mod, int key)
         {
             using (var file = new FileStream(path, FileMode.Open))
@@ -258,18 +231,13 @@ namespace Lab02_DataEncription
                             for (int i = 0; i < bytes.Length; i++)
                             {
                                 var c = (char)ModularPow(bytes[i], key, mod);
-                                //  var v = Convert.ToByte(c);
                                 writer.Write(c);
                             }
-                            // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
-
-
                         }
                     }
 
                 }
             }
         }
-        
     }
 }
