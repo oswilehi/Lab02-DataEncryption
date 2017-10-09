@@ -129,10 +129,11 @@ namespace Lab02_DataEncription
         public void GenerateKeys()
         {
             GeneratePrimeNumber();
-           
+            
             n = GenerateValueN();
             var  z = PhiEulier();
             publicKey = CoprimeNumber(z);
+            
             privateKey = GeneratePrivateKeyWithModInverse(publicKey,z);
                       
               
@@ -149,7 +150,7 @@ namespace Lab02_DataEncription
             while (a > 0)
             {
                 int t = i / a, x = a;
-                a = i % x;
+                a = ModBetweenTwoNumbers(x, i); ;
                 i = x;
                 x = d;
                 d = v - t * x;
@@ -228,10 +229,7 @@ namespace Lab02_DataEncription
                         {
                             for (int i = 0; i < bytes.Length; i++)
                             {
-                                //var c = (char)((bytes[i] ^ publicKey) % n);
-                                var c = (char)ModularPow(bytes[i], publicKey, n);
-                                writer.Write(c);
-                                //writer.Write(Convert.ToByte((bytes[i] ^ publicKey) % n));
+                                writer.Write(Convert.ToByte(ModularPow(bytes[i], publicKey, n)));
                             }
 
 
@@ -257,9 +255,7 @@ namespace Lab02_DataEncription
                         {
                             for (int i = 0; i < bytes.Length; i++)
                             {
-                                var c = (char)ModularPow(bytes[i], key, mod);
-                                //  var v = Convert.ToByte(c);
-                                writer.Write(c);
+                                writer.Write(Convert.ToByte(ModularPow(bytes[i], key,mod)));
                             }
                             // writer.Write(Convert.ToByte(Math.Pow(Convert.ToInt32(bytes[i]), key) % n));
 
