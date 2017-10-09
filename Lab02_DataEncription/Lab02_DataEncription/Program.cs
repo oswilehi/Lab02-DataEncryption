@@ -19,7 +19,7 @@ namespace Lab02_DataEncription
             {
                 RSA rsa = new RSA();
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine("Encriptar:\n-d -f\"C:\\filePath.txt\" -k 123,921\nDesencriptar:\n-c -f\"C:\\filePath.txt\"\nCerrar programa:\nX");
+                Console.WriteLine("Encriptar:\n-d -f\"C:\\filePath.txt\" -k 123,921\nDesencriptar:\n-c -f\"C:\\filePath.txt\"\nCerrar programa:\nx");
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("Write the path here: ");
 
@@ -48,7 +48,7 @@ namespace Lab02_DataEncription
                             //FileManager.WriteFile(rsa.Deencryption(FileManager.ReadFile(filePath), mod, key), Path.GetFileNameWithoutExtension(filePath));
                             Utilities.MessageD();
                             break;
-                        case "X":
+                        case "x":
                             keepRunning = false;
                             break;
                         default:
@@ -57,8 +57,8 @@ namespace Lab02_DataEncription
                             break;
                     }
                 }
-                Environment.Exit(0);
             }
+            Environment.Exit(0);
         }
     }
 }
