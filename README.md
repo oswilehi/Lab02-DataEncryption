@@ -10,6 +10,11 @@ El laboratorio 2 consistió en la realización de un programa que cifrará y des
 ### Utilización de programa y demostración de funcionalidad:
 
 -Archivo a cifrar: <br />
-![alt text](https://github.com/oswilehi/Lab1-Compression/blob/master/Lab1-Compression/archivoParaComprimir.PNG)
+![alt text](https://github.com/JackelinneSC/Lab02-DataEncryption/blob/master/Lab02_DataEncription/Images/archivoACifrar.PNG)
 
+-Archivo cifrado: <br />
+![alt text](https://github.com/JackelinneSC/Lab02-DataEncryption/blob/master/Lab02_DataEncription/Images/archivoCifrado.PNG)
+
+-Utilización de interfas: <br />
+![alt text](https://github.com/JackelinneSC/Lab02-DataEncryption/blob/master/Lab02_DataEncription/Images/interfaz.PNG)
 
