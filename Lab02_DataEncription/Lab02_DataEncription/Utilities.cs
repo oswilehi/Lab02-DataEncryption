@@ -92,6 +92,18 @@ namespace Lab02_DataEncription
             Console.WriteLine("Document was successfully decrypted.\n\n");
             Console.ForegroundColor = ConsoleColor.White;
         }
+        public static void MessageNoBlanks()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("\n\tBlank spaces are not allowed in the file name.");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        public static void Separator()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("--------------------------------------------------------------");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
         /// <summary>
         /// This method gets the highest value of the file to encrypt or decrypt
         /// </summary>

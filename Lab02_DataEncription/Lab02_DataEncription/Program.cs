@@ -19,9 +19,12 @@ namespace Lab02_DataEncription
             while (keepRunning)
             {
                 RSA rsa = new RSA();
+                Utilities.Separator();
+                Utilities.MessageNoBlanks();
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.WriteLine("Encrypt:\n-c -f\"C:\\filePath.txt\"\nDecrypt:\n-d -f\"C:\\filePath.cif\" -k 143,200\"\nClose:\nx");
                 Console.ForegroundColor = ConsoleColor.White;
+                Utilities.Separator();
                 Console.WriteLine("Write the path here: ");
 
                 Console.SetCursorPosition(21, Console.CursorTop - 1);
