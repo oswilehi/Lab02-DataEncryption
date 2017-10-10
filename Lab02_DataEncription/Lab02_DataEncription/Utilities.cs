@@ -9,38 +9,7 @@ namespace Lab02_DataEncription
 {
     class Utilities
     {
-        /// <summary>
-        /// Reads a file and returns an array of bytes with the info
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static byte[] ReadFile(string filePath)
-        {
-            using (var file = new FileStream(filePath, FileMode.Open))
-            {
-                using (var reader = new BinaryReader(file))
-                {
-                    var bytes = reader.ReadBytes((int)file.Length);
-                    return bytes;
-                }
-            }
-        }
-        /// <summary>
-        /// Writes in a file starting from a bytes array and from the name of the file
-        /// </summary>
-        /// <param name="bytesToWrite"></param>
-        /// <param name="fileName"></param>
-        public static void WriteFile(byte[] bytesToWrite, string fileName)
-        {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), fileName + "(1).txt");
-            using (var file = new FileStream(path, FileMode.Create))
-            {
-                using (var writer = new BinaryWriter(file))
-                {
-                    writer.Write(bytesToWrite);
-                }
-            }
-        }
+       
         /// <summary>
         /// This method validates that the user writes all the commands correctly.
         /// </summary>
@@ -109,7 +78,7 @@ namespace Lab02_DataEncription
 
         }
         /// <summary>
-        /// This methods show if the message was encrypted or deencrypted correctly
+        /// This methods show if the message was encrypted or decrypted correctly
         /// </summary>
         public static void MessageC()
         {
@@ -124,9 +93,9 @@ namespace Lab02_DataEncription
             Console.ForegroundColor = ConsoleColor.White;
         }
         /// <summary>
-        /// This method gets the highest value of the file to encrypt or deencrypt
+        /// This method gets the highest value of the file to encrypt or decrypt
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">File path</param>
         /// <returns></returns>
         public static int MaxValueOfText(string path)
         {

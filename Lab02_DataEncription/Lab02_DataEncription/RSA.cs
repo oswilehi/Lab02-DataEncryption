@@ -16,7 +16,7 @@ namespace Lab02_DataEncription
         private static int q;
         //Multplication of p and q
         public int n { get; set; }  
-
+        //Keys
         public int publicKey { get; set; }
         public int privateKey { get; set; } 
 
@@ -36,16 +36,7 @@ namespace Lab02_DataEncription
             } while (q.CompareTo(p) == 0 || GenerateValueN() > 255 || GenerateValueN() < maxValueOfPlainText);
 
         }
-        /// <summary>
-        /// Function polinomial to generate a prime number. The min value is 41 and the max value is 1601
-        /// </summary>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        private int PolinomialToGeneratePrimeNumber(int n)
-        {
-            //Polinomio de Euler que generan un número primo. El valor de n va entre cero y treinta nueve.
-            return (int)Math.Pow(n, 2) + n + 41;
-        }
+        
         /// <summary>
         /// This method multiply p and q
         /// </summary>
@@ -73,20 +64,11 @@ namespace Lab02_DataEncription
             int e = 1;
             do
                 e++;
-            while (ModBetweenTwoNumbers(e, n) == 0 || IsNotPrime(e));
+            while ((n% e) == 0 || IsNotPrime(e));
 
             return e;
         }
-        /// <summary>
-        /// Method to apply the operation mod between two numbers
-        /// </summary>
-        /// <param name="e">number 1</param>
-        /// <param name="n">number 2</param>
-        /// <returns>mod between e and n</returns>
-        private int ModBetweenTwoNumbers(int e, int n)
-        {
-            return n % e;
-        }
+       
         /// <summary>
         /// Method that validate if the parameter is a prime number.
         /// </summary>
@@ -125,20 +107,20 @@ namespace Lab02_DataEncription
         /// <param name="z"></param>
         /// <param name="e"></param>
         /// <returns>private key</returns>
-        private int GeneratePrivateKeyWithModInverse(int a, int n)
+        private int GeneratePrivateKeyWithModInverse(int publicKey, int z)
         {
-            int i = n, v = 0, d = 1;
-            while (a > 0)
+            int i = z, v = 0, d = 1;
+            while (publicKey > 0)
             {
-                int t = i / a, x = a;
-                a = ModBetweenTwoNumbers(x, i); ;
+                int t = i / publicKey, x = publicKey;
+                publicKey = i % x; 
                 i = x;
                 x = d;
                 d = v - t * x;
                 v = x;
             }
-            v %= n;
-            if (v < 0) v = (v + n) % n;
+            v %= z;
+            if (v < 0) v = (v + z) % z;
             return v;
         }
         /// <summary>
@@ -155,33 +137,7 @@ namespace Lab02_DataEncription
                 result = (result * number) % mod;
             return result;
         }
-        /// <summary>
-        /// Method that encrypts using RSA method
-        /// </summary>
-        /// <param name="plainText"></param>
-        /// <returns>The method returns an array of bytes</returns>
-        public byte[] Encryption(byte[] plainText)
-        {
-            byte[] encryptedData = new byte[plainText.Length];
-
-            for (int i = 0; i < plainText.Length; i++)
-                encryptedData[i] = Convert.ToByte(Convert.ToInt64(Math.Pow(plainText[i], publicKey)) % n);
-            return encryptedData;
-        }
-        /// <summary>
-        /// Method that deencrypts using RSA method
-        /// </summary>
-        /// <param name="encryptedData"></param>
-        /// <param name="mod"></param>
-        /// <param name="key"></param>
-        /// <returns>Returns an array of bytes</returns>
-        public byte[] Deencryption(byte[] encryptedData, int mod, int key)
-        {
-            byte[] deencrypted = new byte[encryptedData.Length];
-            for (int i = 0; i < deencrypted.Length; i++)
-                deencrypted[i] = Convert.ToByte(Math.Pow(Convert.ToInt64(encryptedData[i]), key) % mod);
-            return deencrypted;
-        }
+       
         /// <summary>
         /// Method that encrypts using RSA method.
         /// It writes the encrypted text into file.
@@ -201,12 +157,8 @@ namespace Lab02_DataEncription
                         using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
                         {
                             for (int i = 0; i < bytes.Length; i++)
-                            {
+                                writer.Write(Convert.ToByte(ModularPow(bytes[i], publicKey, n)));
 
-                                var c = (char)ModularPow(bytes[i], publicKey, n);
-                                writer.Write(c);
-
-                            }
                         }
                     }
                 }
@@ -233,12 +185,8 @@ namespace Lab02_DataEncription
                         using (var writer = new BinaryWriter(outputFile, Encoding.ASCII))
                         {
                             for (int i = 0; i < bytes.Length; i++)
-                            {
+                                writer.Write(Convert.ToByte(ModularPow(bytes[i], key, mod)));
 
-                                var c = (char)ModularPow(bytes[i], key, mod);
-                                writer.Write(c);
-
-                            }
                         }
                     }
 
