@@ -15,12 +15,16 @@ namespace Lab02_DataEncription
             string filePath = "", entry = "", type = "";
             int key = 0, mod = 0;
             bool keepRunning = true;
+            
             while (keepRunning)
             {
                 RSA rsa = new RSA();
+                Utilities.Separator();
+                Utilities.MessageNoBlanks();
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine("Encriptar:\n-d -f\"C:\\filePath.txt\" -k 123,921\nDesencriptar:\n-c -f\"C:\\filePath.txt\"\nCerrar programa:\nx");
+                Console.WriteLine("Encrypt:\n-c -f\"C:\\filePath.txt\"\nDecrypt:\n-d -f\"C:\\filePath.cif\" -k 143,200\"\nClose:\nx");
                 Console.ForegroundColor = ConsoleColor.White;
+                Utilities.Separator();
                 Console.WriteLine("Write the path here: ");
 
                 Console.SetCursorPosition(21, Console.CursorTop - 1);
@@ -40,12 +44,10 @@ namespace Lab02_DataEncription
                             rsa.GenerateKeys(Utilities.MaxValueOfText(filePath));
                             Console.WriteLine("Your private key is:" + rsa.n.ToString() + "," + rsa.privateKey.ToString());
                             rsa.EncryptionRSA(filePath);
-                            //FileManager.WriteFile(rsa.Encryption(FileManager.ReadFile(filePath)), Path.GetFileNameWithoutExtension(filePath));
                             Utilities.MessageC();
                             break;
                         case "-d":
                             rsa.DecryptionRSA(filePath, mod, key);
-                            //FileManager.WriteFile(rsa.Deencryption(FileManager.ReadFile(filePath), mod, key), Path.GetFileNameWithoutExtension(filePath));
                             Utilities.MessageD();
                             break;
                         case "x":
